@@ -196,6 +196,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
         <label for="f_reis">Reiskosten<input id="f_reis" type="number" step="0.01" min="0" value="45.48"></label>
         <label for="f_verlof">Verlof<input id="f_verlof" type="number" min="0" value="30"></label>
       </div>
+      <label for="f_reisnb" class="check"><input id="f_reisnb" type="checkbox"><span>Reiskosten nog niet bekend</span></label>
     </fieldset>
 
     <fieldset>
@@ -373,6 +374,7 @@ function data(){
     functie: $("f_fsel").value === "__anders" ? $("f_functie").value.trim() : $("f_fsel").value,
     contract: $("f_contract").value.trim() || "12 maanden",
     reis: parseFloat($("f_reis").value)||0,
+    reisNb: $("f_reisnb").checked,
     verlof: Number($("f_verlof").value)||0,
     pers: $("f_pers").value.replaceAll("{naam}", naam),
     doel: $("f_doel").value.trim(),
@@ -472,7 +474,7 @@ function buildDoc(d){
       <tr><td>Vestiging</td><td>${esc(d.vest)}</td></tr>
       <tr><td>Werkweek</td><td>${d.uren} uur</td></tr>
       <tr><td>Verlofdagen</td><td>${d.verlof} per jaar</td></tr>
-      <tr><td>Reiskosten</td><td>${eur(d.reis)} netto per maand</td></tr>
+      <tr><td>Reiskosten</td><td>${d.reisNb ? "Op basis van je woon-werkafstand" : eur(d.reis)+" netto per maand"}</td></tr>
     </table>
     <div class="panel"><h3>Jouw jaaroverzicht</h3><table>
       <tr><td>Salaris, 12 maanden</td><td class="n">${eur(jaar)}</td></tr>
@@ -582,6 +584,7 @@ $("f_naam").addEventListener("input", () => {
 });
 $("form").addEventListener("input", e => { if (e.target.id !== "f_naam") render(); });
 $("form").addEventListener("change", render);
+$("f_reisnb").addEventListener("change", e => { $("f_reis").disabled = e.target.checked; });
 $("form").addEventListener("submit", e => e.preventDefault());
 $("f_vmfoto").addEventListener("change", e => {
   const f = e.target.files && e.target.files[0]; if (!f) { customFoto = null; render(); return; }
